@@ -1,0 +1,13 @@
+{
+  "name": "custom_elastic_server_demo",
+  "version": "1.0.0",
+  "description": "Node server on Docker for processing and indexing audio sample documents in elasticsearch",
+  "author": "Peacock Jake <james.hoke.peacock@gmail.com>",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.13.3"
+  }
+}
