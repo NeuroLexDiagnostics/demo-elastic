@@ -25,13 +25,18 @@ Express route handles request by parsing document and creating an indexable "vie
 
 Use elastic.js client to then POST new document(s) to elastic indices
 
+### TODOS
+
+- create custom Dockerfile for spinning up elasticsearch node(s) in Docker
+- add kibana image and instance to docker-compose.yml
+
 
 ### Plan of Attack
 
-Create Express server that can be spun up on a docker instance
-Configure on docker compose for elastic/kibana instances to start
+Create Express server that can be spun up on a docker instance - DONE
+Configure on docker compose for elastic/kibana instances to start - DONE
 
-Create basic CRUD endpoints on server that proxy to elastic cluster using elastic.js client
+Create basic CRUD endpoints on server that proxy to elastic cluster using elastic.js client - NEXT
 
 Create layer to derive new features from original full sample and ouput indexable documents
 
