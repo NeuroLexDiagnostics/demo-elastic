@@ -8,6 +8,12 @@ WORKDIR /usr/src/app
 COPY package.json /usr/src/app/
 RUN npm install
 
+RUN npm install express
+
+RUN npm install body-parser
+
+RUN npm install morgan
+
 # Bundle app source
 COPY . /usr/src/app
 

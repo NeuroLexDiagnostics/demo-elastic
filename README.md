@@ -6,6 +6,15 @@ You will find some examples of audio and linguistic features in the [examples/da
 
 Please use best practice approaches in elastic. For example, the index should be kept "dry" in order to have elasticsearch perform optimally. Also please research interesting elasticsearch features to be used with the data set. For example, elasticsearch has large support for full text analysis which may be useful on the transcription data.
 
+### Usage
+
+$ cd /demo-elastic/democ/docker
+$ docker-compose build
+$ docker-compose up
+
+To test
+$ curl -H "Content-Type: application/json" -X POST -d '{"name":"TEST"}' http://localhost:49160/saveSample
+
 ### Outline
 
 Create Docker image for simulating a deployed instance of elasticsearch/kibana. 
@@ -33,6 +42,8 @@ Use elastic.js client to then POST new document(s) to elastic indices
 
 ### Plan of Attack
 
+Figure out node_modules management. Currently app can't seem to find body parser.. Maybe move up a directory
+
 Create Express server that can be spun up on a docker instance - DONE
 Configure on docker compose for elastic/kibana instances to start - DONE
 
@@ -51,15 +62,17 @@ Potentially also split up between audio and linguistic features
 
 ### Dependencies
 
+docker (Download from Mac App store)
+
 elastic-5.4.0
+
+- Install elastic tutorial for docker: https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
 
 kibana-5.4.0
 
-docker
-
 Node.js
-- express.js
-- elastic.js
+- express.js ($ npm install express)
+- elasticsearch.js ($ npm install elastic)
 
 
 

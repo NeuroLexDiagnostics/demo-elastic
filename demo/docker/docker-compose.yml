@@ -1,53 +1,69 @@
 version: '2'
 services:
   web:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - "/src/app"
     ports:
       - "49160:8080"
-  elasticsearch1:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
-    container_name: elasticsearch1
-    environment:
-      - cluster.name=docker-cluster
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    mem_limit: 1g
-    volumes:
-      - esdata1:/usr/share/elasticsearch/data
-    ports:
-      - 9200:9200
-    networks:
-      - esnet
-  elasticsearch2:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
-    environment:
-      - cluster.name=docker-cluster
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "discovery.zen.ping.unicast.hosts=elasticsearch1"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    mem_limit: 1g
-    volumes:
-      - esdata2:/usr/share/elasticsearch/data
-    networks:
-      - esnet
+    # links:
+    #   - "elasticsearch1:elastic"
+#   elasticsearch1:
+#     image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
+#     container_name: elasticsearch1
+#     environment:
+#       - cluster.name=docker-cluster
+#       - bootstrap.memory_lock=true
+#       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#     ulimits:
+#       memlock:
+#         soft: -1
+#         hard: -1
+#     mem_limit: 1g
+#     volumes:
+#       - esdata1:/usr/share/elasticsearch/data
+#     ports:
+#       - "9200:9200"
+#     networks:
+#       - esnet
+#   elasticsearch2:
+#     image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
+#     environment:
+#       - cluster.name=docker-cluster
+#       - bootstrap.memory_lock=true
+#       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#       - "discovery.zen.ping.unicast.hosts=elasticsearch1"
+#     ulimits:
+#       memlock:
+#         soft: -1
+#         hard: -1
+#     mem_limit: 1g
+#     volumes:
+#       - esdata2:/usr/share/elasticsearch/data
+#     networks:
+#       - esnet
+#   # kibana:
+#   #   image: docker.elastic.co/kibana/kibana:5.4.0
+#   #   container_name: kibana
+#   #   ports:
+#   #     - 5601:5601
+#   #   links:
+#   #     - "elasticsearch1:elastic"
+#   #   volumes:
+#   #     - "./kibana.yml:/usr/share/kibana/config/kibana.yml"
 
-volumes:
-  esdata1:
-    driver: local
-  esdata2:
-    driver: local
 
-networks:
-  esnet:
+  
+
+# volumes:
+#   esdata1:
+#     driver: local
+#   esdata2:
+#     driver: local
+
+# networks:
+#   esnet:
 
 
