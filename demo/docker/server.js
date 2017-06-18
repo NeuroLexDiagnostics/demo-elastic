@@ -20,7 +20,8 @@ var jsonParser = bodyParser.json();
 
 console.log('got here');
 // parse various different custom JSON types as JSON
-app.use(bodyParser.json({}))
+app.use(bodyParser.json({limit:'5mb'}))
+app.use(bodyParser.urlencoded({limit: '5mb', extended: true}));
 
 console.log('maybe here');
 
@@ -30,28 +31,41 @@ app.get('/', function (req, res) {
 });
 
 app.post('/saveSample', jsonParser, function (req, res) {
-	console.log('got here lit')
-	console.log(req);
-	console.log(req.body);
-	console.log(req.body.recording_id);
 
-	// moran.log(req);
+	console.log('got here lit')
+	// console.log(req.body.recording_id);
+
 	client.indexTest();
 
-	var respAll = client.indexAll(req.body, req.body.recording_id);
+	console.log('after ping')
+
+	// var respAll = client.indexAll(req.body, req.body.recording_id);
 
 	// var respName = client.indexMetaData(req.body.name,
 	// 									 req.body.email, 
 	// 									 req.body.transcript, 
 	// 									 req.body.recording_id)
 
-	// var respAudio = client.indexAudio(req.body.features.audio, req.body.recording_id)
+	// /var respAudio = client.indexAudio(req.body.features.audio,
+	// 								req.body.recording_id,
+									// req.body.name,
+									// req.body.transcript)
 
-	// var respLing = client.indexLing(req.body.features.linguistic, req.body.recording_id)
+	// var respLing = client.indexLing(req.body.features.linguistic,
+	// 								req.body.recording_id,
+	// 								req.body.transcript,
+	// 								req.body.name)
 
 
-	res.status = 200;
-	res.send(respAll);
+	// if (respLing == false){
+	// 	console.log('BAD INDEX');
+	// 	res.status = 400;
+	// }
+	// else {
+	// 	res.status = 200;
+	// }
+	// console.log(respLing);
+	// res.send(respLing);
 })
 
 //app.get('/getFeatureById')

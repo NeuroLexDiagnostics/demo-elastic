@@ -1,10 +1,26 @@
-// var elastic = require('elasticsearch');
+var elasticsearch = require('elasticsearch');
+var client = new elasticsearch.Client({
+  host: 'http://elastic:changeme@localhost:9200'
+});
 
 //Begin module function definitions
 module.exports = {
 
   indexTest : function() {
-    return "Success.";
+
+    return client.ping({
+      requestTimeout: 30000,
+    }, function (error) {
+      if (error) {
+        console.error('elasticsearch cluster is down!');
+        return false;
+      } else {
+        console.log('All is well');
+        return true;
+      }
+    });
+
+    // initIndex('features').then(initLingMapping())
   },
   /* Temp function to test indexing entire document */
   indexAll: function (document, id) {
@@ -14,7 +30,7 @@ module.exports = {
   },
 
   /* Index the raw audio features of the sample */
-  indexAudio: function(audio, id) {
+  indexAudio: function(audio, id, name, transcript) {
   	audio_features = ['ZCR', 'spetral_entropy', 'MFCC', 'spectral_rollof', 'energy', 'spectral_energy', 'entropy', 
                       'spectral_spread', 'spectral_centroid', 'chroma_vector'];
 
@@ -33,22 +49,95 @@ module.exports = {
       filed_mean = f + '_mean';
   		indexable.field_std = get_std(reqAudio.f);
       indexable.filed_mean = get_mean(reqAudio.f);
+      console.log('Mean, STD :' + indexable.filed_mean + ', ' + indexable.field_std);
   	}
 
-  	index(indexable, 'audio', id);
+  	client.index({
+      index: 'features',
+      type: 'audio',
+      id: id,
+      body: {
+        name : name,
+        data : indexable,
+        transcript :transcript
+      }
+    }, function (error, response) {
+        console.log(error)
+        console.log(response)
+    });
 
   },
 
   /* Index the derived linguistic features of the sample */
-  indexLing: function(linguist, id) {
+  indexLing: function(ling_data, id, transcript, name) {
+
+    client.index({
+      index: 'features',
+      type: 'linguistic',
+      id: id,
+      body: {
+        name : name,
+        data : ling_data,
+        transcript :transcript
+      }
+    }, function (error, response) {
+        console.log(error)
+        console.log(response)
+    });
 
   },
 
   /* Index the metadata of the sample for displaying */
   indexMetaData: function(name, email, transcript, id) {
     //check what params will be passed in
-  }
+  },
+
 };
+
+function indexExists(indexName) {
+    return client.indices.exists({
+        index: indexName
+    });
+}
+
+function initIndex(indexName) {
+    return client.indices.create({
+        index: indexName,
+    });
+}
+module.exports.initIndex = initIndex;
+
+function deleteIndex(indexName) {
+    return client.indices.delete({
+        index: indexName
+    });
+}
+
+
+function initLingMapping() {
+    return client.indices.putMapping({
+        index: 'features',
+        type: 'linguistic',
+        body: {
+            properties: {
+                title: { type: 'string' },
+                data: {
+                    type: 'completion',
+                    analyzer: 'simple',
+                    search_analyzer: 'simple',
+                    payloads: true
+                },
+                transcript: {
+                    type: 'string',
+                    analyzer: 'simple',
+                    search_analyzer: 'simple',
+                    payloads: true
+                }
+            }
+        }
+    });
+}
+module.exports.initLingMapping = initLingMapping
 	
 
 // function get_std(vector) {
