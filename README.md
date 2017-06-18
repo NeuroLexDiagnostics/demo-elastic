@@ -9,9 +9,11 @@ Please use best practice approaches in elastic. For example, the index should be
 ### Usage
 
 $ cd demo-elastic/demo/docker
+
 $ docker-compose up --build
 
 To test
+
 $ python uploader.py
 
 ### Outline
@@ -22,42 +24,20 @@ The docker instance will be an Express server that acts as a wrapper client (cus
 with the elastic cluster. Kibana dashboards will be accessible directly.
 
 Engineer who checks out repo should be able to compose and spin up docker instance and then send and receive documents 
-via HTTP requests.
+via HTTP requests (currently utilized in uploader.py)
 
 Example Use case:
 
-User POSTs full JSON document of an analyzed audio sample to endpoint (named "LexIndex" for now) (on docker instance)
+User POSTs full JSON document of an analyzed audio sample to endpoint ('localhost:49160' for now) (on docker instance)
 
 Express route handles request by parsing document and creating an indexable "view" of the original document.
 - calculate std, mean, etc. from arrays like linguistics.ZCR
 
 Use elastic.js client to then POST new document(s) to elastic indices
 
+- Can visit localhost:5601 to view indices through kibana
+- Can use uploader.py's GET(id) method to verify document can be retrieved
 ### TODOS
-
-- create custom Dockerfile for spinning up elasticsearch node(s) in Docker
-- add kibana image and instance to docker-compose.yml
-
-
-### Plan of Attack
-
-Figure out node_modules management. Currently app can't seem to find body parser.. Maybe move up a directory
-
-Create Express server that can be spun up on a docker instance - DONE
-Configure on docker compose for elastic/kibana instances to start - DONE
-
-Create basic CRUD endpoints on server that proxy to elastic cluster using elastic.js client - NEXT
-
-Create layer to derive new features from original full sample and ouput indexable documents
-
-Create kibana dashboards based on what queries will be valuable to data scientists 
-
-
-### Elastic Indices
-
-Probably would be a good idea to separate indices into text/numerical indices for starters
-Potentially also split up between audio and linguistic features
-
 
 ### Dependencies
 
@@ -69,10 +49,7 @@ elastic-5.4.0
 
 kibana-5.4.0
 
-Node.js
-- express.js ($ npm install express)
-- elasticsearch.js ($ npm install elastic)
-
+Node.js (see 'demo/docker/package.json')
 
 
 ### Licensing
