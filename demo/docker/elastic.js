@@ -1,10 +1,14 @@
 var elasticsearch = require('elasticsearch');
 require('dotenv').config({ silent: true })
 var client = new elasticsearch.Client({
-  host: process.env.ELASTICSEARCH,
-  username: process.env.USERNAME,
-  password: process.env.PASSWORD
+  host: 'http://elastic:changeme@elasticsearch:9200'
 });
+
+
+  // host: process.env.ELASTICSEARCH,
+  // username: process.env.USERNAME,
+  // password: process.env.PASSWORD
+
 
 //Begin module function definitions
 module.exports = {
