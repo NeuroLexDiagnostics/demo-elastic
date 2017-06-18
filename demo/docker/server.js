@@ -66,6 +66,8 @@ app.post('/saveSample', jsonParser, function (req, res) {
 	// }
 	// console.log(respLing);
 	// res.send(respLing);
+
+	res.send('Success!');
 })
 
 //app.get('/getFeatureById')
