@@ -86,14 +86,14 @@ elasticsearch.startupTimeout: 5000
 logging.dest: stdout
 
 # Set the value of this setting to true to suppress all logging output.
-logging.silent: false
+logging.silent: true
 
 # Set the value of this setting to true to suppress all logging output other than error messages.
-logging.quiet: false
+logging.quiet: true
 
 # Set the value of this setting to true to log all events, including system usage information
 # and all requests.
-logging.verbose: true
+logging.verbose: false
 
 # Set the interval in milliseconds to sample system and process performance
 # metrics. Minimum is 100ms. Defaults to 5000.

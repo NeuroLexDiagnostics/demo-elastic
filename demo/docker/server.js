@@ -35,7 +35,7 @@ app.post('/saveSample', jsonParser, function (req, res) {
 	console.log('got here lit')
 	// console.log(req.body.recording_id);
 
-	client.indexTest();
+	// console.log(client.indexTest());
 
 	console.log('after ping')
 
@@ -51,23 +51,33 @@ app.post('/saveSample', jsonParser, function (req, res) {
 									// req.body.name,
 									// req.body.transcript)
 
-	// var respLing = client.indexLing(req.body.features.linguistic,
-	// 								req.body.recording_id,
-	// 								req.body.transcript,
-	// 								req.body.name)
+	var respLing = client.indexLing(req.body.features.linguistic,
+									req.body.recording_id,
+									req.body.transcript,
+									req.body.name)
 
+	if (!respLing){
+		console.log('Index not created.');
+		res.status = 400;
+	}
+	else {
+		res.status = 200;
+	}
+	res.send('Created: ' + respLing);
+})
 
-	// if (respLing == false){
-	// 	console.log('BAD INDEX');
-	// 	res.status = 400;
-	// }
-	// else {
-	// 	res.status = 200;
-	// }
-	// console.log(respLing);
-	// res.send(respLing);
+app.get('/getSample', function (req, res) {
+	// console.log(req)
+	console.log(req.query.id);
+	client.getSample(req.query.id, function(resp) {
+		res.send(resp);
+	});
+	
+})
 
-	res.send('Success!');
+app.get('/init', function (req, res) {
+	console.log(client.init());
+	res.send("Success");
 })
 
 //app.get('/getFeatureById')

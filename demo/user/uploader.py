@@ -1,6 +1,7 @@
 import io
 import http
 import requests
+import time
 
 UTF = 'utf-8'
 
@@ -17,7 +18,10 @@ def read_in_chunks(filename, chunk_size=128):
             break
         yield str.encode(data)
 
-
+def init():
+    r = requests.get(url = 'http://localhost:49160/init')
+    print(r.text)
+    return
 
 def POST(filename):
 
@@ -25,12 +29,27 @@ def POST(filename):
 	headers = {'Content-type': 'application/json'}
 	chunk_size = 512
 	print('POSTing ' + filename)
-	r = requests.post('http://localhost:49160/saveSample', data=read_in_chunks(filename), headers=headers)
+	r = requests.post(url, data=read_in_chunks(filename), headers=headers)
 	print(r.text)
 	return True
 
 
+def GET(id):
+    url = 'http://localhost:49160/getSample'
+    print("Getting linguistic feature data with id " + str(id))
+    r = requests.get(url, params={'id':id})
+    return(r.text)
 
+print(init())
+time.sleep(2)
+POST("../../examples/data/1.json")
+time.sleep(2)
+# POST("../../examples/data/2.json")
+# POST("../../examples/data/3.json")
+# POST("../../examples/data/4.json")
+# POST("../../examples/data/5.json")
 
+# pause(1000)
+print(GET(1))
 
-print(POST("../../examples/data/1.json"))
+print('Done.')

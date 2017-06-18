@@ -1,34 +1,36 @@
 var elasticsearch = require('elasticsearch');
 require('dotenv').config({ silent: true })
 var client = new elasticsearch.Client({
-  host: 'http://elastic:changeme@elasticsearch:9200'
+  host: process.env.ELASTICSEARCH
 });
-
-
-  // host: process.env.ELASTICSEARCH,
-  // username: process.env.USERNAME,
-  // password: process.env.PASSWORD
 
 
 //Begin module function definitions
 module.exports = {
 
-  indexTest : function() {
+  init : function() {
 
-    return client.ping({
-      requestTimeout: 30000,
-    }, function (error) {
-      if (error) {
-        console.error(error)
-        console.error('elasticsearch cluster is down!');
-        return false;
-      } else {
-        console.log('All is well');
-        return true;
-      }
+    indexExists().then(function (exists) {
+        if (exists) {
+            console.log('Deleting index');
+            return deleteIndex();
+        }
+    }).then(initIndex).then(initLingMapping).then(function() {
+        client.ping({
+          requestTimeout: 30000,
+        }, function (error) {
+          if (error) {
+            console.error(error)
+            console.error('elasticsearch cluster is down!');
+            return false;
+          } else {
+            console.log('All is well');
+            return true;
+          }
+        });
     });
 
-    // initIndex('features').then(initLingMapping())
+    return "Successful Init index";
   },
   /* Temp function to test indexing entire document */
   indexAll: function (document, id) {
@@ -70,8 +72,12 @@ module.exports = {
         transcript :transcript
       }
     }, function (error, response) {
+      if (error) {
         console.log(error)
-        console.log(response)
+        console.log("ERROR above")
+      } else {
+        return response
+      }
     });
 
   },
@@ -79,7 +85,7 @@ module.exports = {
   /* Index the derived linguistic features of the sample */
   indexLing: function(ling_data, id, transcript, name) {
 
-    client.index({
+    return client.create({
       index: 'features',
       type: 'linguistic',
       id: id,
@@ -89,8 +95,12 @@ module.exports = {
         transcript :transcript
       }
     }, function (error, response) {
-        console.log(error)
-        console.log(response)
+        if (error) {
+          console.log(error)
+        } else {
+          return response.created
+        }
+        
     });
 
   },
@@ -100,22 +110,39 @@ module.exports = {
     //check what params will be passed in
   },
 
+  getSample: function(id, callback) {
+    client.get({
+      index: 'features',
+      type: 'linguistic',
+      id: id
+    }, function (error, response) {
+      if (error) {
+        console.log(error);
+        return 'ERROR GETTING.';
+      } else {
+        console.log("Successful Get.")
+        return callback(response._source);
+      }
+    });
+  }
+
 };
 
-function indexExists(indexName) {
+var indexName = 'features'
+
+function indexExists() {
     return client.indices.exists({
         index: indexName
     });
 }
 
-function initIndex(indexName) {
+function initIndex() {
     return client.indices.create({
-        index: indexName,
+        index: indexName
     });
 }
-module.exports.initIndex = initIndex;
 
-function deleteIndex(indexName) {
+function deleteIndex() {
     return client.indices.delete({
         index: indexName
     });
@@ -124,28 +151,23 @@ function deleteIndex(indexName) {
 
 function initLingMapping() {
     return client.indices.putMapping({
-        index: 'features',
+        index: indexName,
         type: 'linguistic',
         body: {
             properties: {
-                title: { type: 'string' },
+                name: { type: 'text' },
                 data: {
-                    type: 'completion',
-                    analyzer: 'simple',
-                    search_analyzer: 'simple',
-                    payloads: true
+                    type: 'object',
                 },
                 transcript: {
-                    type: 'string',
-                    analyzer: 'simple',
-                    search_analyzer: 'simple',
-                    payloads: true
+                    type: 'text',
                 }
-            }
+            },
+            dynamic: true,
+            enabled: true
         }
     });
 }
-module.exports.initLingMapping = initLingMapping
 	
 
 // function get_std(vector) {
