@@ -9,8 +9,7 @@ Please use best practice approaches in elastic. For example, the index should be
 ### Usage
 
 $ cd /demo-elastic/democ/docker
-$ docker-compose build
-$ docker-compose up
+$ docker-compose up --build
 
 To test
 $ curl -H "Content-Type: application/json" -X POST -d '{"name":"TEST"}' http://localhost:49160/saveSample

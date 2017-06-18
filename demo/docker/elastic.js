@@ -1,6 +1,9 @@
 var elasticsearch = require('elasticsearch');
+require('dotenv').config({ silent: true })
 var client = new elasticsearch.Client({
-  host: 'http://elastic:changeme@localhost:9200'
+  host: process.env.ELASTICSEARCH,
+  username: process.env.USERNAME,
+  password: process.env.PASSWORD
 });
 
 //Begin module function definitions
@@ -12,6 +15,7 @@ module.exports = {
       requestTimeout: 30000,
     }, function (error) {
       if (error) {
+        console.error(error)
         console.error('elasticsearch cluster is down!');
         return false;
       } else {
