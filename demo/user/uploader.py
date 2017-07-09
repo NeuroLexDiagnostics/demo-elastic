@@ -1,4 +1,5 @@
 import io
+import os
 import http
 import requests
 import time
@@ -23,33 +24,31 @@ def init():
     print(r.text)
     return
 
-def POST(filename):
+def POST(path, filename):
 
 	url = 'http://localhost:49160/saveSample'
 	headers = {'Content-type': 'application/json'}
 	chunk_size = 512
 	print('POSTing ' + filename)
-	r = requests.post(url, data=read_in_chunks(filename), headers=headers)
-	print(r.text)
-	return True
+	r = requests.post(url, data=read_in_chunks(path + filename), headers=headers)
+	return
 
 
-def GET(id):
+def GET(id, type):
     url = 'http://localhost:49160/getSample'
-    print("Getting linguistic feature data with id " + str(id))
-    r = requests.get(url, params={'id':id})
-    return(r.text)
+    print("Getting " + type + " feature data with id " + str(id))
+    r = requests.get(url, params={'id':id, 'type':type})
+    print(r.status_code)
+    return (type + " document " + str(id)+ "\n" + r.text)
 
-print(init())
+init()
 time.sleep(2)
-POST("../../examples/data/1.json")
+path = "../../examples/data/"
+for filename in os.listdir(path):
+    POST(path, filename)
 time.sleep(2)
-# POST("../../examples/data/2.json")
-# POST("../../examples/data/3.json")
-# POST("../../examples/data/4.json")
-# POST("../../examples/data/5.json")
 
-# pause(1000)
-print(GET(1))
+print(GET(1, 'linguistic'))
+print(GET(1, 'audio'))
 
 print('Done.')

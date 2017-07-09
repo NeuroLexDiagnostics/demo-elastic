@@ -1,4 +1,6 @@
 var elasticsearch = require('elasticsearch');
+var stats = require('statistics');
+var async = require('async');
 require('dotenv').config({ silent: true })
 var client = new elasticsearch.Client({
   host: process.env.ELASTICSEARCH
@@ -12,19 +14,19 @@ module.exports = {
 
     indexExists().then(function (exists) {
         if (exists) {
-            console.log('Deleting index');
+            console.log("Deleting index");
             return deleteIndex();
         }
-    }).then(initIndex).then(initLingMapping).then(function() {
+    }).then(initIndex).then(initMappings).then(function() {
         client.ping({
           requestTimeout: 30000,
         }, function (error) {
           if (error) {
             console.error(error)
-            console.error('elasticsearch cluster is down!');
+            console.error("elasticsearch cluster is down!");
             return false;
           } else {
-            console.log('All is well');
+            console.log("All is well");
             return true;
           }
         });
@@ -40,43 +42,53 @@ module.exports = {
   },
 
   /* Index the raw audio features of the sample */
-  indexAudio: function(audio, id, name, transcript) {
-  	audio_features = ['ZCR', 'spetral_entropy', 'MFCC', 'spectral_rollof', 'energy', 'spectral_energy', 'entropy', 
-                      'spectral_spread', 'spectral_centroid', 'chroma_vector'];
+  indexAudio: function(audio, id, name) {
 
   	indexable = {};
   	//Create new indexable document that starts with just the id and then we will add derived features to be indexed.
 
-  	for (var f in audio_features) {
-  		if (f == 'ZCR' || f == 'MFCC') {
-  			// ZCR_stds = [];
-  			for (vector in audio.f) {
-    				get_std(vector);
-  			}
+    async.forEachOf(audio, function(data, key, callback) {
 
-  		}
-      field_std = f + '_std';
-      filed_mean = f + '_mean';
-  		indexable.field_std = get_std(reqAudio.f);
-      indexable.filed_mean = get_mean(reqAudio.f);
-      console.log('Mean, STD :' + indexable.filed_mean + ', ' + indexable.field_std);
-  	}
+      var _stats = {};
 
-  	client.index({
+      if (key == 'chroma_vector' || key == 'MFCC') {
+        _stats.stdev = [];
+        _stats.mean = [];
+
+        for (var i = 0; i < data.length; i++) {
+          frame_stats = get_stats(data[i]);
+          _stats.stdev.push(frame_stats.stdev);
+          _stats.mean.push(frame_stats.mean);
+        }
+
+      } else {
+        _stats = get_stats(data, callback);
+      }
+
+      var field_std = key + "_std";
+      var field_mean = key + "_mean";
+      indexable[field_std] = _stats.stdev;
+      indexable[field_mean] = _stats.mean;   
+      
+    }, function(err){
+      if (err) {
+        console.log(err);
+      }
+    });
+
+  	return client.create({
       index: 'features',
       type: 'audio',
       id: id,
       body: {
         name : name,
-        data : indexable,
-        transcript :transcript
+        data : indexable
       }
     }, function (error, response) {
       if (error) {
-        console.log(error)
-        console.log("ERROR above")
+        console.log(error);
       } else {
-        return response
+        return response.created;
       }
     });
 
@@ -96,24 +108,19 @@ module.exports = {
       }
     }, function (error, response) {
         if (error) {
-          console.log(error)
+          console.log(error);
         } else {
-          return response.created
+          return response.created;
         }
         
     });
 
   },
 
-  /* Index the metadata of the sample for displaying */
-  indexMetaData: function(name, email, transcript, id) {
-    //check what params will be passed in
-  },
-
-  getSample: function(id, callback) {
-    client.get({
+  getSample: function(id, _type, callback) {
+    return client.get({
       index: 'features',
-      type: 'linguistic',
+      type: _type,
       id: id
     }, function (error, response) {
       if (error) {
@@ -149,8 +156,9 @@ function deleteIndex() {
 }
 
 
-function initLingMapping() {
-    return client.indices.putMapping({
+function initMappings() {
+  console.log("Initializing mappings");
+    resp1 = client.indices.putMapping({
         index: indexName,
         type: 'linguistic',
         body: {
@@ -167,30 +175,30 @@ function initLingMapping() {
             enabled: true
         }
     });
+
+    resp2 = client.indices.putMapping({
+        index: indexName,
+        type: 'audio',
+        body: {
+            properties: {
+                name: { type: 'text' },
+                data: {
+                    type: 'object',
+                }
+            },
+            dynamic: true,
+            enabled: true
+        }
+    });
+
+    return (resp1 + '\n' + resp2)
 }
 	
 
-// function get_std(vector) {
-// 	//Install node.js statistics library
+function get_stats(vector) {
 
-// 	console.log(vector.length());
-// 	return 4.005;
-// }
+  features = vector.reduce(stats);
 
-// // function get_mean(vector) {
-// //   console.log(vector.length());
+	return features;
+}
 
-// //   return stats.mean(vector);
-// // }
-
-// function index(document, index, id) {
-//   return;
-// 	//connect to client
-
-// 	//create index if it doesn't exist
-
-// 	// client.post(document)
-
-
-// 	//assert indexed = true on response
-// }
