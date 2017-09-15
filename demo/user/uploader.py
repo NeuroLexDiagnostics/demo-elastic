@@ -34,12 +34,12 @@ def POST(path, filename):
 	return
 
 
-def GET(id, type):
+def GET(id, index_type):
     url = 'http://localhost:49160/getSample'
-    print("Getting " + type + " feature data with id " + str(id))
-    r = requests.get(url, params={'id':id, 'type':type})
+    print("Getting " + index_type + " feature data with id " + str(id))
+    r = requests.get(url, params={'id':id, 'type':index_type})
     print(r.status_code)
-    return (type + " document " + str(id)+ "\n" + r.text)
+    return (index_type + " document " + str(id)+ "\n" + r.text)
 
 init()
 time.sleep(2)
@@ -49,6 +49,10 @@ for filename in os.listdir(path):
 time.sleep(2)
 
 print(GET(1, 'linguistic'))
+print(GET(2, 'linguistic'))
+print(GET(3, 'linguistic'))
+print(GET(4, 'linguistic'))
+print(GET(5, 'linguistic'))
 print(GET(1, 'audio'))
 
 print('Done.')
