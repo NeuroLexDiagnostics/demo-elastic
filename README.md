@@ -22,7 +22,7 @@ To visualize the data.
 
 	1. Go to: http://localhost:5601/app/kibana#/management/kibana/objects?_g=()&_a=(tab:visualizations)
 
-	2. Click Import in the top right. Select demo-elastic/demo/docker/export.json
+	2. Click Import in the top right. Select demo-elastic/demo/docker/visualizations.json
 
 	3. When the import finishes, the visualizations tab should have the vizualizations listed.
 
@@ -50,7 +50,7 @@ Node.js
 Depending on the goal of a particular data scientist, she could create a kibana dashboard that consists of a few visualizations she 
 found relevant to the current dataset. For example, when looking at the effect of caffeine, an obvious feature to look at would be
 words per minute (speaking speed).
- 
+
 
 ### Licensing
 
