@@ -2,42 +2,34 @@
 
 This is the demo project assigned to Jake Peacock to show how we can use [Elasticsearch](https://www.elastic.co/) / [Kibana](https://www.elastic.co/products/kibana) as a dashboard for our data scientists.
 
-You will find some examples of audio and linguistic features in the [examples/data folder](./examples/data). Your goal is to index useful elements of this data into Elasticsearch to be used in creating a dashboard through kibana. Some challenges will include some of the audio data which has a large set of data points for each sample. One idea would be to do some basic statistical analysis on these audio features before indexing into elastic.
+You will find some examples of audio and linguistic features in the [examples/data folder](./examples/data). The goal is to index useful elements of this data into Elasticsearch to be used in creating a dashboard through kibana. Some challenges will include some of the audio data which has a large set of data points for each sample. One idea would be to do some basic statistical analysis on these audio features before indexing into elastic.
 
 Please use best practice approaches in elastic. For example, the index should be kept "dry" in order to have elasticsearch perform optimally. Also please research interesting elasticsearch features to be used with the data set. For example, elasticsearch has large support for full text analysis which may be useful on the transcription data.
 
 ### Usage
 
-$ cd demo-elastic/demo/docker
+To spin up the docker container..
 
-$ docker-compose up --build
+	$ cd demo-elastic/demo/docker
 
-To test
+	$ docker-compose up --build
 
-$ python uploader.py
+To populate the indexes
 
-### Outline
+	$ python uploader.py
 
-Create Docker image for simulating a deployed instance of elasticsearch/kibana. 
+To visualize the data.
 
-The docker instance will be an Express server that acts as a wrapper client (custom to neurolex) for RESTful interaction
-with the elastic cluster. Kibana dashboards will be accessible directly.
+	1. Go to: http://localhost:5601/app/kibana#/management/kibana/objects?_g=()&_a=(tab:visualizations)
 
-Engineer who checks out repo should be able to compose and spin up docker instance and then send and receive documents 
-via HTTP requests (currently utilized in uploader.py)
+	2. Click Import in the top right. Select demo-elastic/demo/docker/export.json
 
-Example Use case:
+	3. When the import finishes, the visualizations tab should have the vizualizations listed.
 
-User POSTs full JSON document of an analyzed audio sample to endpoint ('localhost:49160' for now) (on docker instance)
+	4. Go to URL: http://localhost:5601/app/kibana#/visualize?_g=()
 
-Express route handles request by parsing document and creating an indexable "view" of the original document.
-- calculate std, mean, etc. from arrays like linguistics.ZCR
+	5. Analyze Various Visualizations.
 
-Use elastic.js client to then POST new document(s) to elastic indices
-
-- Can visit localhost:5601 to view indices through kibana
-- Can use uploader.py's GET(id) method to verify document can be retrieved
-### TODOS
 
 ### Dependencies
 
@@ -49,8 +41,16 @@ elastic-5.4.0
 
 kibana-5.4.0
 
-Node.js (see 'demo/docker/package.json')
+Node.js 
+- see 'demo/docker/package.json' for all npm packages
 
+
+### Next Steps
+
+Depending on the goal of a particular data scientist, she could create a kibana dashboard that consists of a few visualizations she 
+found relevant to the current dataset. For example, when looking at the effect of caffeine, an obvious feature to look at would be
+words per minute (speaking speed).
+ 
 
 ### Licensing
 
