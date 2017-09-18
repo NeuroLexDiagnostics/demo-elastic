@@ -18,6 +18,23 @@ To populate the indexes
 
 	$ python uploader.py
 
+To create the index 
+
+	1. Go to: http://localhost:5601/app/kibana
+
+	2. Create new index
+		'features'
+		Types
+		- linguistic
+		- audio
+
+object w/ features
+new collection id
+
+sample id (how long since caffeine since taking survey)
+
+make sure to sit down and explain w/ Peter
+
 To visualize the data.
 
 	1. Go to: http://localhost:5601/app/kibana#/management/kibana/objects?_g=()&_a=(tab:visualizations)
@@ -32,6 +49,8 @@ To visualize the data.
 
 
 ### Dependencies
+
+Python 3.6
 
 docker (Download from Mac App store)
 
