@@ -21,7 +21,7 @@ def read_in_chunks(filename, chunk_size=128):
 
 def init():
     r = requests.get(url = 'http://localhost:49160/init')
-    print(r.text)
+    # print(r.text)
     return
 
 def POST(path, filename):
@@ -43,16 +43,18 @@ def GET(id, index_type):
 
 init()
 time.sleep(2)
-path = "../../examples/data/"
+path = "../../examples/data/caffeine/" #edit this to relative path for 33 ID samples
 for filename in os.listdir(path):
     POST(path, filename)
 time.sleep(2)
 
-print(GET(1, 'linguistic'))
-print(GET(2, 'linguistic'))
-print(GET(3, 'linguistic'))
-print(GET(4, 'linguistic'))
-print(GET(5, 'linguistic'))
-print(GET(1, 'audio'))
+# print(GET(1, 'linguistic'))
+# print(GET(2, 'linguistic'))
+# print(GET(3, 'linguistic'))
+# print(GET(4, 'linguistic'))
+# print(GET(5, 'linguistic'))
+# print(GET(1, 'audio'))
 
-print('Done.')
+print('======================')
+print('====     Done.    ====')
+print('======================')

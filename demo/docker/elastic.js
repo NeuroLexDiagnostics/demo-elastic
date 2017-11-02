@@ -97,6 +97,14 @@ module.exports = {
   /* Index the derived linguistic features of the sample */
   indexLing: function(ling_data, id, transcript, name) {
 
+
+    if (!ling_data) {
+      console.log("No ling data. Fine.");
+      return "Skipping!";
+    }
+    
+    console.log(ling_data)
+
     return client.create({
       index: 'features',
       type: 'linguistic',
