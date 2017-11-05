@@ -32,12 +32,12 @@ app.get('/', function (req, res) {
 app.post('/saveSample', jsonParser, function (req, res) {
 
 	var respLing = client.indexLing(req.body.features.linguistic,
-									req.body.recording_id,
+									req.body.recordingID,
 									req.body.transcript,
 									req.body.name)
 
 	var respAudio = client.indexAudio(req.body.features.audio,
-									req.body.recording_id,
+									req.body.recordingID,
 									req.body.name)
 
 	if (!respLing){
