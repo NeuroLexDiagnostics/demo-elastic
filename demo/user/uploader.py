@@ -43,12 +43,15 @@ def GET(id, index_type):
 
 init()
 time.sleep(2)
-path = "../../examples/data/caffeine/" #edit this to relative path for 33 ID samples
+path = "../../examples/data/" #edit this to relative path for 33 ID samples
 for filename in os.listdir(path):
-    POST(path, filename)
+    if not os.path.isdir(path+filename):
+    #don't post directories
+        print(filename)
+        POST(path, filename)
 time.sleep(2)
 
-# print(GET(1, 'linguistic'))
+print(GET(1, 'linguistic'))
 # print(GET(2, 'linguistic'))
 # print(GET(3, 'linguistic'))
 # print(GET(4, 'linguistic'))

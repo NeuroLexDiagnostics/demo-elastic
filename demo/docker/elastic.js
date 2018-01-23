@@ -104,6 +104,7 @@ module.exports = {
     }
     
     console.log(ling_data)
+    console.log(id)
 
     return client.create({
       index: 'features',
